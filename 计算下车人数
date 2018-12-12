@@ -1,0 +1,47 @@
+# 计算吸引权重
+df_wj = df_result['get_on_num']/sum(df_result['get_on_num'])
+df_result['wj'] = df_wj
+
+# 途径站点数的数学期望
+kk = 0
+for i in range(1,39):
+    kk = kk+i
+lmd = kk/38 
+k = 39 # 站点数
+import math
+# 计算泊松分布
+pro = pd.DataFrame(np.zeros((39,40)))
+for i in range(k):
+    for j in range(k):
+        if (i < j):
+            f = (math.e**(-lmd)*lmd**(j-i))/math.factorial(j-i)
+            pro.iloc[i,j] = f
+        else:
+            continue
+    pro.iloc[i,k] = sum(pro.iloc[i,:k]*df_wj)
+pro.to_csv('ggg.csv',index=False,header=True) #possion_pro.csv
+
+# 构建OD矩阵，求出一个站点到另一个站点的下车人数
+df_OD = pd.DataFrame(np.zeros((k+1,k+1)))
+for i in range(k):
+    for j in range(k):
+        if (i < j):
+            p = pro.iloc[i,j]*df_wj[j]/pro.iloc[i,k]
+            df_OD.iloc[i,j] = round(p*df_result.iloc[i,1])
+
+# 各站点下车人数
+for i in range(k):
+    df_OD.iloc[k,i] = sum(df_OD.iloc[:k,i])
+# 各站点上车人数
+for i in range(k):
+    df_OD.iloc[i,k] = sum(df_OD.iloc[i,:k])
+# 上车总人数
+sum(df_OD.iloc[:k,k])
+# 下车总人数
+sum(df_OD.iloc[k,:k])
+
+df_OD.iloc[k,k] = sum(df_OD.iloc[k,:k])
+# 将下车人数作为一列放入df_result中
+df_result['get_off_num'] = df_OD.iloc[k,:k]
+# 保存数据
+df_OD.to_csv('hhh.csv') # gjc_OD.csv
