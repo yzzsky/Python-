@@ -1,0 +1,16 @@
+import matplotlib.pyplot as plt
+list1 = os.listdir('time')
+plt.figure(figsize=(8,8))
+for file_name in list1:
+    if file_name.split('.')[-1] == 'csv':
+        time = pd.read_csv('./time/'+file_name,sep=',',encoding='gbk')
+        plt.plot(time.iloc[:,0],time.iloc[:,1],label=file_name)
+plt.xticks([5,10,15,20],['05:00','10:00','15:00','20:00'])
+plt.yticks([0,100000,200000,300000,400000,500000,600000],['0','10','20','30','40','50','60'])
+plt.rcParams['font.sans-serif'] = ['SimHei']
+plt.rcParams['axes.unicode_minus'] = False
+plt.ylabel('刷卡人数（单位：万）')
+plt.xlabel('时间点')
+plt.title('刷卡人数折线图')
+plt.legend(('2014-06-09','2014-06-10','2014-06-11','2014-06-12','2014-06-13'),loc = 0)
+plt.show()
