@@ -1,0 +1,27 @@
+# 去重
+import numpy as np
+np.unique()
+pd.unique(data['业务时间'])
+data1 = data.drop_duplicates(['业务时间','卡片记录编码','车牌号'])
+
+data4 = data4.reset_index(drop = True)
+isduplicated = data4.duplicated(['业务时间','卡片记录编码','车牌号'],keep='first')
+data3 = [data4.iloc[i,:] for i in range(data4.shape[0]) if isduplicated[i] == False]
+
+data2 = data.loc[~isduplicated,:]
+data3 = pd.DataFrame(data3)
+
+# 提取68路数据
+data_68 = data3.loc[data3.线路名称 == '68路',:]
+
+# file = ['./gps/gps_20140609.csv','./gps/gps_20140609.csv','./gps/gps_20140609.csv',...]
+# data = pd.read_csv(file[1])
+
+file_list = os.listdir('gps')
+for file_name in file_list:
+    if file_name.split('.')[-1] == 'csv':
+        data = pd.read_csv('./gps/'+file_name,sep=',',encoding='gbk')
+        isduplicated = data.duplicated(['业务时间','卡片记录编码','车牌号'],keep='first')
+        data_new = data.loc[~isduplicated,:]
+        data_68 = data_new.loc[data_new.线路名称=='68路',:]
+    data_68.to_csv('aaa.csv',index = False,header=True,na_rep = 'NaN',mode='a+')
