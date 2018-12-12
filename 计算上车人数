@@ -1,0 +1,25 @@
+# 自定义计算上车人数的函数
+def num(data):
+    # 建立一个数据框
+    result = pd.DataFrame(np.zeros((39,3)),columns=['get_on_station','get_on_num','bus_route'])
+    zd = np.unique(df_actual['实际站点'])-1 # 提取实际站点位置
+    for i in zd:
+        ind = data.loc[data['实际站点']-1 == zd[i],:]
+        result.iloc[i,0] = zd[i]
+        result.iloc[i,1] = ind.shape[0]
+        result.iloc[i,2] = '68路'
+    return result
+
+# 分时段计算上车人数
+lj = ['./ddd/shiduan1_get_on.csv','./ddd/shiduan2_get_on.csv','./ddd/shiduan3_get_on.csv',
+      './ddd/shiduan4_get_on.csv','./ddd/shiduan5_get_on.csv']
+file2 = os.listdir('gjc')
+for i in range(len(lj)):
+    if file2[i].split('.')[-1] == 'csv':
+        data = pd.read_csv('./gjc/'+file2[i],sep=',',encoding='gbk')
+        result = num(data)
+        result.to_csv(lj[i],index=False,header=True)  # number文件夹
+    else:
+        continue
+# 不分时段计算上车人数
+df_result = num(df_actual)  # gjc_num.csv
