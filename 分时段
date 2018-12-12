@@ -1,0 +1,16 @@
+df_actual = pd.read_csv('gjc_zd_actual.csv',sep=',',encoding = 'gbk')
+type(df_actual['业务时间'][0])
+T = [df_actual['业务时间'][i].split(' ') for i in range(df_actual.shape[0])]
+df_actual['业务时间'] = [' '.join(['2014/6/9',T[i][1]]) for i in range(len(T))]
+df_actual['业务时间'] = pd.to_datetime(df_actual['业务时间'],format='%Y/%m/%d %H:%M')
+type(df_actual['业务时间'][0])
+# 将时间分段，设置时间点
+point = ['2014/6/9 05:00','2014/6/9 08:00','2014/6/9 09:00',
+         '2014/6/9 18:00','2014/6/9 19:00','2014/6/9 23:59']
+# 设置保存路径
+lj = ['./ccc/shiduan1_68.csv','./ccc/shiduan2_68.csv','./ccc/shiduan3_68.csv',
+      './ccc/shiduan4_68.csv','./ccc/shiduan5_68.csv']
+for k in range(5):
+    kk = (df_actual['业务时间'] >= point[k]) & (df_actual['业务时间'] < point[k+1])
+    gjc = df_actual.loc[kk,:]
+    gjc.to_csv(lj[k],na_rep='NaN',index=False,header=True) # gjc
