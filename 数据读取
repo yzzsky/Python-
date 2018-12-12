@@ -1,0 +1,19 @@
+import pandas as pd
+import os
+os.chdir('G:/城市公交站点设置的优化分析/data')
+data = pd.read_csv('./gps/gps_20140609.csv',encoding='gbk',sep=',')
+# 第二种读取方法
+import csv
+try:
+    f = open('./gps/gps_20140609.csv',encoding='gbk',mode='r+')
+    d = csv.reader(f)
+    data1 = [shuju for shuju in d]
+    data2 = pd.DataFrame(data1,columns=data1[0]).iloc[1:,:]
+finally:
+    if f:
+        f.close()
+#第三种        
+with open('./gps/gps_20140609.csv',mode='r+',encoding='gbk') as f:
+    d2 = csv.reader(f)
+    data3 = [shuju for shuju in d2]
+    data4 = pd.DataFrame(data3,columns=data3[0]).iloc[1:,:]
