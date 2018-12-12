@@ -1,0 +1,18 @@
+from sklearn.cluster import DBSCAN
+df_data = pd.read_csv('gjc.csv',sep=',',encoding='gbk')
+db = DBSCAN(eps=0.0011,min_samples=3,metric='euclidean').fit(df_data.iloc[:,:2])
+db.labels_
+flag = pd.Series(db.labels_,name='flag')
+max(flag)
+df_cluster_result = pd.concat([df_data,flag],axis=1)
+# 描述统计
+df_cluster_result.describe()
+plt.figure(figsize=(6,6))
+plt.scatter(df_cluster_result['经度'],df_cluster_result['纬度'],c=df_cluster_result['flag'])
+plt.show()
+# 去除噪声点
+df_cluster_result = df_cluster_result[df_cluster_result['flag']>=0]
+plt.figure(figsize=(6,6))
+plt.scatter(df_cluster_result['经度'],df_cluster_result['纬度'],c=df_cluster_result['flag'])
+plt.show()
+df_cluster_result.to_csv('bbb.csv',index=False,header=True,na_rep='NaN')  # gjc_zd.csv
